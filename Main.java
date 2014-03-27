@@ -171,7 +171,7 @@ public class Main extends JPanel
 						
 					    unexploredURL.add(boardURL);
 					    
-					    //TODO loenda mitu lehte boardil on
+					    //TODO WHAT IS THIS SHIT !!!
 					    for (int i = 0; i< 16; i++){
 					    	unexploredURL.add(boardURL + "/" + i);
 					    }
