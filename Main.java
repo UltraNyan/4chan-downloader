@@ -311,7 +311,7 @@ public static void main(String s[]) {
   
   
 	private void exploreURL(String url) {
-		System.out.println("Uurib: "+url);
+		
 		
 		try {
 			Document doc = Jsoup.connect(url).get();
