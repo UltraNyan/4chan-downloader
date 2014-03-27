@@ -8,6 +8,8 @@ public class Main extends JPanel
 	private JTextField textFieldThreadURL;
 	private JTextField textFieldBoardURL;
 	
+	static JFrame frame ;
+	
 	JButton btnFolder;
 	JFileChooser chooser;
 	String foldername = "";
@@ -18,9 +20,12 @@ public class Main extends JPanel
 	JButton btnCommenceLazor;
 	String threadURL;
 	String boardURL;
+	int pageCount;
 	
 	JProgressBar progressBarTotal;
 	JProgressBar progressBar;
+	
+	JComboBox comboBox;
 	
 	
 	List<String> unexploredURL = new ArrayList<>();
@@ -43,7 +48,6 @@ public class Main extends JPanel
 		
 		progressBar = new JProgressBar();
 		progressBar.setToolTipText("ze power level");
-		progressBar.setStringPainted(true);
 		progressBar.setValue(0);
 		progressBar.setBounds(27, 514, 404, 31);
 		add(progressBar);
@@ -79,7 +83,7 @@ public class Main extends JPanel
 				textFieldThreadURL.setText("");
 			}
 		});
-		textFieldBoardURL.setToolTipText("Example: http://4chan.org/b");
+		textFieldBoardURL.setToolTipText("Example: b");
 		textFieldBoardURL.setColumns(10);
 		textFieldBoardURL.setBounds(27, 299, 255, 19);
 		add(textFieldBoardURL);
@@ -107,12 +111,15 @@ public class Main extends JPanel
 		
 		progressBarTotal = new JProgressBar();
 		progressBarTotal.setVisible(false);
-		progressBarTotal.setStringPainted(true);
 		progressBarTotal.setToolTipText("Total progress");
 		progressBarTotal.setBounds(27, 483, 404, 31);
 		add(progressBarTotal);
 		
-		JComboBox comboBox = new JComboBox();
+
+		
+		comboBox = new JComboBox();
+		comboBox.setModel(new DefaultComboBoxModel(new String[] {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"}));
+		comboBox.setSelectedIndex(9);
 		comboBox.setBounds(27, 387, 54, 25);
 		add(comboBox);
 		
@@ -150,9 +157,17 @@ public class Main extends JPanel
 		}
 		
 		if(e.getSource() == btnCommenceLazor) {
+			btnCommenceLazor.setText("IMMA FIRIN MAH LAZER !!!");
+			Rectangle btnCommenceLazorRect = btnCommenceLazor.getBounds();//important line 
+			btnCommenceLazorRect.x = 0;
+			btnCommenceLazorRect.y = 0;         
+            btnCommenceLazor.paintImmediately(btnCommenceLazorRect);//important line 
+            
 			threadURL = textFieldThreadURL.getText();
 			boardURL = textFieldBoardURL.getText();
+			pageCount = Integer.parseInt((String) comboBox.getSelectedItem());
 			progressBar.setValue(0);
+			
 			setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			
 			if (threadURL.matches("(http://boards.4chan.org/|https://boards.4chan.org/).*(/res/).*") && (!foldername.isEmpty() || foldername != "")) {
@@ -162,17 +177,18 @@ public class Main extends JPanel
 			} else if (!boardURL.isEmpty() && (!foldername.isEmpty() || foldername != "")) {
 				if (!chckbxImAwareThat.isSelected() ) {
 					System.out.println("Got to check that!");
+					JOptionPane.showMessageDialog(frame, "Confirm that you might get banned.");
 				} else {
 					
 					boardURL = "http://boards.4chan.org/" + boardURL;
-					if (boardURL.matches("(http://boards.4chan.org/|https://boards.4chan.org/)([a-z0-9])")){
+					if (boardURL.matches("(http://boards.4chan.org/|https://boards.4chan.org/)([a-z0-9])+")){
 						
 						System.out.println("Muahahha");
 						
-					    unexploredURL.add(boardURL);
+					    //unexploredURL.add(boardURL);
 					    
 					    //TODO WHAT IS THIS SHIT !!!
-					    for (int i = 0; i< 16; i++){
+					    for (int i = 0; i< pageCount; i++){
 					    	unexploredURL.add(boardURL + "/" + i);
 					    }
 					    
@@ -184,6 +200,7 @@ public class Main extends JPanel
 						exploredThreadURL.clear();
 						progressBarTotal.setVisible(false);
 					} else {
+						JOptionPane.showMessageDialog(frame, "Board url seems invalid!L");
 						System.out.println("Board url seems invalid!");
 					}
 
@@ -192,7 +209,14 @@ public class Main extends JPanel
 
 			} else {
 				System.out.println("oops");
+				if (foldername == ""){
+					JOptionPane.showMessageDialog(frame, "You forgot to select output folder.");
+				}else if (boardURL.isEmpty()){
+					JOptionPane.showMessageDialog(frame, "You forgot the URL");
+				}
 			}
+			
+			btnCommenceLazor.setText("IMMA CHARGIN MAH LAZER");
 
 		}
 		
@@ -207,7 +231,7 @@ public class Main extends JPanel
 		try {
   			Document doc = Jsoup.connect(threadURL2).get();
 
-  			System.out.println(doc.body().select(".fileThumb"));
+  			//System.out.println(doc.body().select(".fileThumb"));
   			
   			Elements img = doc.body().select(".fileThumb");
   			
@@ -251,11 +275,11 @@ public class Main extends JPanel
 
 public static void main(String s[]) {
 	try {
-		UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 	} catch (Throwable e) {
 		e.printStackTrace();
 	}
-    JFrame frame = new JFrame("4Chan Image Dowloader - DogeTech Systems");
+    frame = new JFrame("4Chan Image Dowloader - DogeTech Systems");
     Main  panel = new Main ();
     frame.addWindowListener(
 	    new WindowAdapter() {
@@ -269,7 +293,11 @@ public static void main(String s[]) {
     frame.setVisible(true);
    
 
+    //frame.setIconImage(new ImageIcon("/DogeTech/1395861827483.jpg").getImage());
+    //frame.setIconImage(new ImageIcon("/a.png").getImage());
+    frame.setIconImage(Toolkit.getDefaultToolkit().getImage("a.png"));
     
+
     
     }
   
@@ -311,7 +339,7 @@ public static void main(String s[]) {
   
   
 	private void exploreURL(String url) {
-		
+		System.out.println("Searching: "+url);
 		
 		try {
 			Document doc = Jsoup.connect(url).get();
@@ -343,30 +371,35 @@ public static void main(String s[]) {
   
   private static void getImages(String src, String folder) throws IOException {
 
-      //Exctract the name of the image from the src attribute
-      int indexname = src.lastIndexOf("/");
-
-      if (indexname == src.length()) {
-          src = src.substring(1, indexname);
-      }
-
-      indexname = src.lastIndexOf("/");
-      String name = src.substring(indexname, src.length());
-
-      System.out.println(name);
-
-      //Open a URL Stream
-      URL url = new URL(src);
-      InputStream in = url.openStream();
-
-
-		OutputStream out = new BufferedOutputStream(new FileOutputStream( folder+ name));
-
-      for (int b; (b = in.read()) != -1;) {
-          out.write(b);
-      }
-      out.close();
-      in.close();
+	  if (src == ""|| src.isEmpty()) {
+		  System.out.println("Much error in src :(");
+	  } else {
+	  
+	      //Extract the name of the image from the src attribute
+	      int indexname = src.lastIndexOf("/");
+	
+	      if (indexname == src.length()) {
+	          src = src.substring(1, indexname);
+	      }
+	
+	      indexname = src.lastIndexOf("/");
+	      String name = src.substring(indexname, src.length());
+	
+	      System.out.println(name);
+	
+	      //Open a URL Stream
+	      URL url = new URL(src);
+	      InputStream in = url.openStream();
+	
+	
+			OutputStream out = new BufferedOutputStream(new FileOutputStream( folder+ name));
+	
+	      for (int b; (b = in.read()) != -1;) {
+	          out.write(b);
+	      }
+	      out.close();
+	      in.close();
+	  }
   }
   }
   
